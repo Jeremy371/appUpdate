@@ -137,12 +137,18 @@
             </activation>
             <properties>
                 <springboot-profile>local</springboot-profile>
+                <tomcat-url>http://localhost:20000/manager/text</tomcat-url>
+                <tomcat-username>smps</tomcat-username>
+                <tomcat-password>humane12!</tomcat-password>
             </properties>
         </profile>
         <profile>
             <id>dev</id>
             <properties>
                 <springboot-profile>dev</springboot-profile>
+                <tomcat-url>http://humane.ipdisk.co.kr:20000/manager/text</tomcat-url>
+                <tomcat-username>humane</tomcat-username>
+                <tomcat-password>humane12!</tomcat-password>
             </properties>
         </profile>
         <profile>
@@ -205,6 +211,18 @@
                         <version>${querydsl.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <path>/ROOT</path>
+                    <update>true</update>
+                    <url>${tomcat-url}</url>
+                    <username>${tomcat-username}</username>
+                    <password>${tomcat-password}</password>
+                </configuration>
             </plugin>
         </plugins>
     </build>
