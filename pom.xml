@@ -51,7 +51,7 @@
         <repository>
             <id>humane-repository</id>
             <name>Humane System Library for Maven</name>
-            <url>http://humane.ipdisk.co.kr:7000/content/repositories/releases/</url>
+            <url>http://humane.ipdisk.co.kr:10000/content/repositories/releases/</url>
         </repository>
     </repositories>
 
@@ -137,8 +137,8 @@
             </activation>
             <properties>
                 <springboot-profile>local</springboot-profile>
-                <tomcat-url>http://localhost:20000/manager/text</tomcat-url>
-                <tomcat-username>smps</tomcat-username>
+                <tomcat-url>http://localhost:10000/manager/text</tomcat-url>
+                <tomcat-username>humane</tomcat-username>
                 <tomcat-password>humane12!</tomcat-password>
             </properties>
         </profile>
@@ -146,7 +146,7 @@
             <id>dev</id>
             <properties>
                 <springboot-profile>dev</springboot-profile>
-                <tomcat-url>http://humane.ipdisk.co.kr:20000/manager/text</tomcat-url>
+                <tomcat-url>http://humane.ipdisk.co.kr:10000/manager/text</tomcat-url>
                 <tomcat-username>humane</tomcat-username>
                 <tomcat-password>humane12!</tomcat-password>
             </properties>
