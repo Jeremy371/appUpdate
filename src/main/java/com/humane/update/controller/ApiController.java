@@ -43,13 +43,17 @@ public class ApiController {
     private final AppVersionRepository appVersionRepository;
 
     @RequestMapping(value = "ver", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public AppVersionDto ver(@RequestHeader(name = "packageName") String packageName) {
-        return apiService.getLastVersion(packageName);
+    public ResponseEntity<AppVersionDto> ver(@RequestHeader(name = "packageName") String packageName) {
+        AppVersionDto dto = apiService.getLastVersion(packageName);
+        if (dto == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        return ResponseEntity.ok(dto);
     }
 
     @RequestMapping(value = "url", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<AppUrlDto> url(@RequestHeader(name = "packageName") String packageName) {
-        return apiService.getUrlList(packageName);
+    public ResponseEntity<List<AppUrlDto>> url(@RequestHeader(name = "packageName") String packageName) {
+        List<AppUrlDto> list = apiService.getUrlList(packageName);
+        if (list == null || list.size() == 0) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        else return ResponseEntity.ok(list);
     }
 
     @RequestMapping(value = "apk", method = RequestMethod.GET, produces = "application/apk")

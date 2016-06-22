@@ -18,5 +18,5 @@ import javax.persistence.Id;
 public class App {
     @Id @GeneratedValue private Long appId;
     private String packageName;
-    @Column(columnDefinition = "bit default 1") private boolean isUse;
+    @Column(columnDefinition = "bit default 1") private Boolean isUse;
 }
