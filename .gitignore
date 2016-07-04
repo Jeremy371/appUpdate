@@ -1,6 +1,7 @@
 .idea/
 target/
 src/main/resources/static/bower_components/
+logs/
 *.iws
 *.ipr
 *.iml

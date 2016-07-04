@@ -29,7 +29,8 @@ public class ApiService {
                         ConstructorExpression.create(AppVersionDto.class,
                                 appVersion.app.packageName,
                                 appVersion.versionCode,
-                                appVersion.versionName)
+                                appVersion.versionName,
+                                appVersion.message)
                 );
     }
 

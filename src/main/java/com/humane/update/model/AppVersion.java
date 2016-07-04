@@ -23,4 +23,5 @@ public class AppVersion {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     @Column(columnDefinition = "datetime default current_timestamp") private Date regDttm;
     @Column(columnDefinition = "bit default 1") private Boolean isUse;
+    @Column private String message;
 }
