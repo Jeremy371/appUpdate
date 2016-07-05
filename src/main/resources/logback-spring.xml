@@ -4,6 +4,7 @@
 
     <appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--<prudent>true</prudent>-->
+        <file>logs/application.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>logs/application.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
         </rollingPolicy>
