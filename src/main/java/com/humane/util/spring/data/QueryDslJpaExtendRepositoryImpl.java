@@ -1,9 +1,9 @@
 package com.humane.util.spring.data;
 
-import com.mysema.query.jpa.JPQLQuery;
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.Predicate;
-import com.mysema.query.types.path.PathBuilder;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -40,8 +40,8 @@ public class QueryDslJpaExtendRepositoryImpl<T, ID extends Serializable> extends
 
     @Override
     public T findOne(Predicate predicate, JoinDescriptor... joinDescriptors) {
-        JPQLQuery query = createFetchQuery(predicate, joinDescriptors);
-        return query.uniqueResult(path);
+        JPQLQuery<T> query = createFetchQuery(predicate, joinDescriptors);
+        return query.fetchOne();
     }
 
     @Override
@@ -49,8 +49,8 @@ public class QueryDslJpaExtendRepositoryImpl<T, ID extends Serializable> extends
         JPQLQuery countQuery = createQuery(predicate);
         JPQLQuery query = querydsl.applyPagination(pageable, createQuery(predicate));
 
-        Long total = countQuery.count();
-        List<T> content = total > pageable.getOffset() ? query.list(entityPath) : Collections.emptyList();
+        Long total = countQuery.fetchCount();
+        List<T> content = total > pageable.getOffset() ? query.fetch() : Collections.emptyList();
 
         return new PageImpl<>(content, pageable, total);
     }
@@ -60,8 +60,8 @@ public class QueryDslJpaExtendRepositoryImpl<T, ID extends Serializable> extends
         JPQLQuery countQuery = createQuery(predicate);
         JPQLQuery query = querydsl.applyPagination(pageable, createFetchQuery(predicate, joinDescriptors));
 
-        Long total = countQuery.count();
-        List<T> content = total > pageable.getOffset() ? query.list(path) : Collections.emptyList();
+        Long total = countQuery.fetchCount();
+        List<T> content = total > pageable.getOffset() ? query.fetch() : Collections.emptyList();
 
         return new PageImpl<>(content, pageable, total);
     }
@@ -71,8 +71,8 @@ public class QueryDslJpaExtendRepositoryImpl<T, ID extends Serializable> extends
         JPQLQuery countQuery = createQuery(predicate);
         JPQLQuery query = querydsl.applyPagination(pageable, createFetchQuery(predicate, joinDescriptors));
 
-        Long total = countQuery.count();
-        List<T> content = total > pageable.getOffset() ? query.list(entityPath) : Collections.emptyList();
+        Long total = countQuery.fetchCount();
+        List<T> content = total > pageable.getOffset() ? query.select(entityPath).fetch() : Collections.emptyList();
 
         return new PageImpl<>(content, pageable, total);
     }
@@ -81,7 +81,8 @@ public class QueryDslJpaExtendRepositoryImpl<T, ID extends Serializable> extends
         JPQLQuery query = querydsl.createQuery(path);
         for (JoinDescriptor joinDescriptor : joinDescriptors)
             join(joinDescriptor, query);
-        return query.where(predicate);
+        query.where(predicate);
+        return query;
     }
 
     private JPQLQuery join(JoinDescriptor joinDescriptor, JPQLQuery query) {
@@ -100,10 +101,7 @@ public class QueryDslJpaExtendRepositoryImpl<T, ID extends Serializable> extends
             case RIGHTJOIN:
                 query.rightJoin(joinDescriptor.path);
                 break;
-            case FULLJOIN:
-                query.fullJoin(joinDescriptor.path);
-                break;
         }
-        return query.fetch();
+        return query.fetchJoin();
     }
 }

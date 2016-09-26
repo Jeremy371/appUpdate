@@ -1,7 +1,7 @@
 package com.humane.util.spring.data;
 
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.Predicate;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

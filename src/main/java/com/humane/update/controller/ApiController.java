@@ -9,7 +9,7 @@ import com.humane.update.model.QAppVersion;
 import com.humane.update.repository.AppRepository;
 import com.humane.update.repository.AppVersionRepository;
 import com.humane.update.service.ApiService;
-import com.mysema.query.BooleanBuilder;
+import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dongliu.apk.parser.ApkParser;
@@ -37,7 +37,8 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ApiController {
 
-    @Value("${path.image.examinee:C:/api/apk}") String pathApk;
+    @Value("${path.image.examinee:C:/api/apk}")
+    String pathApk;
     private final ApiService apiService;
     private final AppRepository appRepository;
     private final AppVersionRepository appVersionRepository;

@@ -1,6 +1,6 @@
 package com.humane.update.dto;
 
-import com.mysema.query.annotations.QueryProjection;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 
 @Data

@@ -1,7 +1,7 @@
 package com.humane.util.spring.data;
 
-import com.mysema.query.JoinType;
-import com.mysema.query.types.EntityPath;
+import com.querydsl.core.JoinType;
+import com.querydsl.core.types.EntityPath;
 
 public class JoinDescriptor {
     public final EntityPath path;
