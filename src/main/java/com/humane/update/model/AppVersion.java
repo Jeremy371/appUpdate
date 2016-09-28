@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"appId", "versionCode"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"appId", "versionName"})})
 @DynamicInsert
 @DynamicUpdate
 @JsonInclude(JsonInclude.Include.NON_NULL)

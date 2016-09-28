@@ -1,5 +1,6 @@
 package com.humane.update.controller;
 
+import com.github.zafarkhaja.semver.Version;
 import com.humane.update.dto.AppUrlDto;
 import com.humane.update.dto.AppVersionDto;
 import com.humane.update.model.App;
@@ -44,10 +45,39 @@ public class ApiController {
     private final AppVersionRepository appVersionRepository;
 
     @RequestMapping(value = "ver", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<AppVersionDto> ver(@RequestHeader(name = "packageName") String packageName) {
-        AppVersionDto dto = apiService.getLastVersion(packageName);
-        if (dto == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<AppVersionDto> ver(@RequestHeader(name = "packageName") String packageName, @RequestHeader(name = "clientId", required = false, defaultValue = "") String clientId) {
+        AppVersionDto dto = checkVersion(packageName, clientId);
+        if(dto != null) return ResponseEntity.ok(dto);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
+
+    private AppVersionDto checkVersion(String packageName, String clientId) {
+        List<AppVersionDto> dtos = apiService.getLastVersion(packageName);
+
+        Version v0 = null;
+        for (AppVersionDto dto : dtos) {
+            Version v1;
+            if (v0 == null) {
+                v1 = Version.valueOf(dto.getVersionName());
+                if (v1.getPreReleaseVersion().equals(clientId)) {
+                    v0 = v1;
+                }
+            } else {
+                v1 = Version.valueOf(dto.getVersionName());
+                if (v1.getPreReleaseVersion().equals(clientId)) {
+                    if (v1.greaterThan(v0)) v0 = v1;
+                }
+            }
+        }
+
+        if (v0 != null) {
+            for (AppVersionDto dto : dtos) {
+                if (dto.getVersionName().equals(v0.toString()))
+                    return dto;
+            }
+        }
+
+        return null;
     }
 
     @RequestMapping(value = "url", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -58,32 +88,34 @@ public class ApiController {
     }
 
     @RequestMapping(value = "apk", method = RequestMethod.GET, produces = "application/apk")
-    public ResponseEntity<InputStreamResource> downloadApk(@RequestHeader(name = "packageName") String packageName) {
-        AppVersionDto appVersion = apiService.getLastVersion(packageName);
+    public ResponseEntity<InputStreamResource> downloadApk(@RequestHeader(name = "packageName") String packageName, @RequestHeader(name = "clientId", required = false, defaultValue = "") String clientId) {
+        AppVersionDto appVersion = checkVersion(packageName, clientId);
+        if(appVersion != null){
+            File path = new File(pathApk);
+            if (!path.exists()) path.mkdirs();
+            File file = new File(path, packageName + "_" + appVersion.getVersionName() + ".apk");
+            if (!file.exists()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
 
-        File path = new File(pathApk);
-        if (!path.exists()) path.mkdirs();
-        File file = new File(path, packageName + "_" + appVersion.getVersionCode() + ".apk");
-        if (!file.exists()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            try {
+                InputStreamResource isResource = new InputStreamResource(new FileInputStream(file));
+                FileSystemResource fileSystemResource = new FileSystemResource(file);
+                String fileName = new String(FilenameUtils.getName(file.getAbsolutePath()).getBytes("UTF-8"), "iso-8859-1");
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+                headers.add("Pragma", "no-cache");
+                headers.add("Expires", "0");
+                headers.setContentLength(fileSystemResource.contentLength());
+                headers.setContentDispositionFormData("attachment", fileName);
+                return new ResponseEntity<>(isResource, headers, HttpStatus.OK);
+            } catch (IOException e) {
+                log.error("{}", e.getMessage());
+            }
         }
 
-        try {
-            InputStreamResource isResource = new InputStreamResource(new FileInputStream(file));
-            FileSystemResource fileSystemResource = new FileSystemResource(file);
-            String fileName = new String(FilenameUtils.getName(file.getAbsolutePath()).getBytes("UTF-8"), "iso-8859-1");
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-            headers.add("Pragma", "no-cache");
-            headers.add("Expires", "0");
-            headers.setContentLength(fileSystemResource.contentLength());
-            headers.setContentDispositionFormData("attachment", fileName);
-            return new ResponseEntity<>(isResource, headers, HttpStatus.OK);
-        } catch (IOException e) {
-            log.error("{}", e.getMessage());
-        }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -118,7 +150,7 @@ public class ApiController {
 
             AppVersion appVersion = appVersionRepository.findOne(new BooleanBuilder()
                     .and(QAppVersion.appVersion.app.packageName.eq(packageName))
-                    .and(QAppVersion.appVersion.versionCode.eq(versionCode))
+                    .and(QAppVersion.appVersion.versionName.eq(versionName))
             );
 
             if (appVersion == null) {
@@ -134,11 +166,12 @@ public class ApiController {
             File path = new File(pathApk);
             if (!path.exists()) path.mkdirs();
 
-            File file = new File(path, packageName + "_" + appVersion.getVersionCode() + ".apk");
+            File file = new File(path, packageName + "_" + appVersion.getVersionName() + ".apk");
             multipartFile.transferTo(file);
 
             return ResponseEntity.ok(null);
         } catch (IOException e) {
+            e.printStackTrace();
             log.error("{}", e.getMessage());
         } finally {
             if (tempFile != null) tempFile.delete();

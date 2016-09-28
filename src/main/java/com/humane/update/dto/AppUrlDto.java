@@ -5,11 +5,13 @@ import lombok.Data;
 
 @Data
 public class AppUrlDto {
-    private String name;
-    private String url;
+    private final String clientId;
+    private final String name;
+    private final String url;
 
     @QueryProjection
-    public AppUrlDto(String name, String url) {
+    public AppUrlDto(String clientId, String name, String url) {
+        this.clientId = clientId;
         this.name = name;
         this.url = url;
     }

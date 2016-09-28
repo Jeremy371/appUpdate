@@ -17,6 +17,7 @@ import java.util.Date;
 @Data
 public class AppUrl {
     @Id @GeneratedValue private Long _id;
+    @Column(nullable = false) private String clientId;
     @Column(nullable = false) private String name;
     @Column(nullable = false) private String url;
     @ManyToOne @JoinColumn(name = "appId", nullable = false) private App app;
