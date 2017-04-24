@@ -30,8 +30,6 @@
         <commons-io.version>2.5</commons-io.version>
         <commons-lang3.version>3.5</commons-lang3.version>
         <rxjava.version>1.2.9</rxjava.version>
-        <jasperreports.version>6.5.0</jasperreports.version>
-        <poi.version>3.15</poi.version>
     </properties>
 
     <dependencies>
@@ -67,6 +65,11 @@
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
         </dependency>
+         <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -93,7 +96,7 @@
         <dependency>
             <groupId>net.dongliu</groupId>
             <artifactId>apk-parser</artifactId>
-            <version>2.1.6</version>
+            <version>2.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.zafarkhaja</groupId>
@@ -116,18 +119,12 @@
             </properties>
         </profile>
         <profile>
-            <id>dev</id>
-            <properties>
-                <springboot-profile>dev</springboot-profile>
-                <tomcat-url>http://humane.ipdisk.co.kr:10000/manager/text</tomcat-url>
-                <tomcat-username>humane</tomcat-username>
-                <tomcat-password>humane12!</tomcat-password>
-            </properties>
-        </profile>
-        <profile>
             <id>dbtest</id>
             <properties>
                 <springboot-profile>dbtest</springboot-profile>
+                <tomcat-url>http://humane.iptime.org:10000/manager/text</tomcat-url>
+                <tomcat-username>humane</tomcat-username>
+                <tomcat-password>humane12!</tomcat-password>
             </properties>
         </profile>
     </profiles>
