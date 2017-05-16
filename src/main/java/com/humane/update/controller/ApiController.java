@@ -13,7 +13,7 @@ import com.humane.update.service.ApiService;
 import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dongliu.apk.parser.ApkParser;
+import net.dongliu.apk.parser.ApkFile;
 import net.dongliu.apk.parser.bean.ApkMeta;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +120,7 @@ public class ApiController {
     }
 
     @RequestMapping(value = "apk", method = RequestMethod.POST)
-    public ResponseEntity uploadApk(@RequestParam("file") MultipartFile multipartFile) {
+    public ResponseEntity<?> uploadApk(@RequestParam("file") MultipartFile multipartFile) {
 
         File tempFile = null;
         try {
@@ -129,9 +129,10 @@ public class ApiController {
             multipartFile.transferTo(tempFile);
 
             // 2. APK 분석
-            ApkParser apkParser = new ApkParser(tempFile);
-            ApkMeta apkMeta = apkParser.getApkMeta();
-
+            ApkFile apkFile = new ApkFile(tempFile);
+            ApkMeta apkMeta = apkFile.getApkMeta();
+            apkFile.close();
+         
             String packageName = apkMeta.getPackageName();
 
             // 3. DB - App 조회
