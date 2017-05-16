@@ -1,4 +1,7 @@
 .idea/
+.classpath
+.project
+.settings/
 target/
 src/main/resources/static/bower_components/
 logs/
