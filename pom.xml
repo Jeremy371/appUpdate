@@ -117,7 +117,7 @@
                 <springboot-profile>local</springboot-profile>
                 <tomcat-url>http://localhost:10000/manager/text</tomcat-url>
                 <tomcat-username>humane</tomcat-username>
-                <tomcat-password>humane12!</tomcat-password>
+                <tomcat-password>humane!814</tomcat-password>
             </properties>
         </profile>
         <profile>
@@ -126,7 +126,7 @@
                 <springboot-profile>update</springboot-profile>
                 <tomcat-url>http://update.humanesystem.com:10000/manager/text</tomcat-url>
                 <tomcat-username>humane</tomcat-username>
-                <tomcat-password>humane12!</tomcat-password>
+                <tomcat-password>humane!814</tomcat-password>
             </properties>
         </profile>
     </profiles>
